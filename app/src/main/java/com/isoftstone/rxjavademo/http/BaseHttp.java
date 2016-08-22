@@ -2,6 +2,7 @@ package com.isoftstone.rxjavademo.http;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.URLUtil;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -9,6 +10,7 @@ import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.app.SingleBeans;
 import com.isoftstone.rxjavademo.beans.ModleBean;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +36,10 @@ import rx.schedulers.Schedulers;
  */
 
 public class BaseHttp {
+    protected static Map<String, String> keys = new HashMap<>();
+    protected final String TOKEN = "token";
     protected Context context;
+    protected HttpApi api;
 
     private OkHttpClient _createClient(Map<String, String> headers, boolean isCach) {
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
@@ -58,6 +63,25 @@ public class BaseHttp {
 
         return builder.build();
     }
+
+    private <T> Subscription httpResult(Observable<ModleBean<T>> observable, final Subscriber<T> subscriber) {
+
+        return observable.map(new Func1<ModleBean<T>, T>() {
+            @Override
+            public T call(ModleBean<T> modleBean) {
+                if (modleBean.success) {
+                    return (T) modleBean.pager;
+                } else {
+                    subscriber.onError(new Throwable(modleBean.msg));
+                }
+                return null;
+            }
+        }).subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
+    }
+
 
     protected <T> T createService(Class<T> clazz, Map<String, String> headers, String baseURL, boolean isCach) {
 
@@ -83,22 +107,55 @@ public class BaseHttp {
         return builder.build().create(clazz);
     }
 
-    protected <T> Subscription httpResult(Observable<ModleBean<T>> observable, final Subscriber<T> subscriber) {
-
-        return observable.map(new Func1<ModleBean<T>, T>() {
+    protected <T> Subscription dispachHttp(Observable<ModleBean<T>> observable,
+                                           final HttpRequest<T> httpRequest) {
+        return httpResult(observable, new Subscriber<T>() {
             @Override
-            public T call(ModleBean<T> modleBean) {
-                if (modleBean.success) {
-                    return (T) modleBean.pager;
-                } else {
-                    subscriber.onError(new Throwable(modleBean.msg));
-                }
-                return null;
+            public void onStart() {
+                super.onStart();
+                httpRequest.onStart();
             }
-        }).subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
+
+            @Override
+            public void onCompleted() {
+                unsubscribe();
+                httpRequest.onFinish();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e("tag", "------>onError=" + e.getMessage());
+                httpRequest.onError();
+            }
+
+            @Override
+            public void onNext(T t) {
+                httpRequest.onSuccess(t);
+            }
+        });
     }
 
+    /**
+     * @return com.isoftstone.rxjavademo.http.HttpManager
+     * @Title: httpRequest
+     * @Description: (isCach是否缓存，firstCach请求首选缓存)
+     * @params [context, isCach, firstCach]
+     */
+    protected void httpRequest(Context context, boolean isCach) {
+        this.context = context;
+        api = createService(HttpApi.class, null, Constants.BASEURL, isCach);
+        if (!TextUtils.isEmpty(SingleBeans.getTokenUtil().getToken()) && keys.size() == 0)
+            keys.put(TOKEN, SingleBeans.getTokenUtil().getToken());
+    }
+
+
+    public interface HttpRequest<T> {
+        void onStart();
+
+        void onSuccess(T t);
+
+        void onFinish();
+
+        void onError();
+    }
 }

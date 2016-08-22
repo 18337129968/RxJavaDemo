@@ -12,10 +12,10 @@ import java.util.List;
  */
 
 public class SysUserBean {
-   public int currPage;
-   public int offsetIndex;
-   public int pageSize;
-   public int totalCount;
-   public int totalPage;
-   public List<String> content;
+    public int currPage;
+    public int offsetIndex;
+    public int pageSize;
+    public int totalCount;
+    public int totalPage;
+    public List<String> content;
 }

@@ -21,5 +21,6 @@ public class Constants {
     public static final int HTTP_CACHSIZE = 10 * 1024 * 1024;  //设置缓存 10M
     public static final String HTTP_CACHFILENAME = "httpCache";
     public static final int HTTP_CONNECTTIME = 30; //秒
+    public static final String KEY_TOKEN = "mm_token";
 
 }

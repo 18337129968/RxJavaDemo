@@ -3,12 +3,11 @@ package com.isoftstone.rxjavademo.utils;
 import android.content.Context;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 
+import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.app.SingleBeans;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
-
-import rx.Subscriber;
+import com.isoftstone.rxjavademo.http.BaseHttp;
 
 /**
  * RxJavaDemo
@@ -24,7 +23,7 @@ public class TokenUtil {
     private static TokenUtil tokenUtil;
     private final String APP_ID = "e3225cc1-eba7-4993-93f9-63044d4ee540";
     private final String KEY_DEVICE_ID = "mm_device_id";
-    private final String KEY_TOKEN = "mm_token";
+
     private static String DEVICE_ID;
     private String mToken;
 
@@ -37,7 +36,7 @@ public class TokenUtil {
     }
 
     public void getTocken(Context context) {
-        mToken = SingleBeans.getCacheManager().getAsString(KEY_TOKEN);
+        mToken = SingleBeans.getCacheManager().getAsString(Constants.KEY_TOKEN);
         if (TextUtils.isEmpty(mToken)) {
             String deviceId = SingleBeans.getCacheManager().getAsString(KEY_DEVICE_ID);
             if (TextUtils.isEmpty(deviceId)) {
@@ -52,35 +51,41 @@ public class TokenUtil {
                 DEVICE_ID = deviceId;
             }
 
-            SingleBeans.getHttpManager().httpRequest(context, true)
-                    .getToken(APP_ID, deviceId, new Subscriber<SysUserBean>() {
-                        @Override
-                        public void onCompleted() {
-                            SingleBeans.getCacheManager().put(KEY_TOKEN, mToken);
-                            unsubscribe();
-                        }
+            SingleBeans.getHttpManager()
+                    .getToken(context, true, APP_ID, deviceId, new BaseHttp.HttpRequest<SysUserBean>() {
+                                @Override
+                                public void onStart() {
+//                                    Log.i("tag","----onStart");
+                                }
 
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("tag", "------>onError=" + e.getMessage());
-                        }
+                                @Override
+                                public void onSuccess(SysUserBean sysUserBean) {
+                                    mToken = sysUserBean.content.get(0) + "";
+//                                    Log.i("tag","----onSuccess");
+                                }
 
-                        @Override
-                        public void onNext(SysUserBean sysUserBean) {
-                            mToken = sysUserBean.content.get(0) + "";
-                        }
-                    });
+                                @Override
+                                public void onFinish() {
+                                    SingleBeans.getCacheManager().put(Constants.KEY_TOKEN, mToken);
+//                                    Log.i("tag","----onFinish");
+                                }
+
+                                @Override
+                                public void onError() {
+
+                                }
+                            }
+                    );
 
         }
     }
 
     public String getToken() {
         if (TextUtils.isEmpty(mToken)) {
-            return SingleBeans.getCacheManager().getAsString(KEY_TOKEN);
+            return SingleBeans.getCacheManager().getAsString(Constants.KEY_TOKEN);
         }
         return mToken;
     }
-
 
 }
 

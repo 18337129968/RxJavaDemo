@@ -1,10 +1,9 @@
 package com.isoftstone.rxjavademo.app;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.isoftstone.rxjavademo.utils.CacheManager;
 import com.isoftstone.rxjavademo.http.HttpManager;
+import com.isoftstone.rxjavademo.utils.CacheManager;
 import com.isoftstone.rxjavademo.utils.TokenUtil;
 
 import java.io.File;
@@ -44,7 +43,6 @@ public class SingleBeans {
         }
 
         if (tokenUtil == null) {
-            Log.i("tag", "---------");
             tokenUtil = tokenUtil.getInstance();
             tokenUtil.getTocken(context);
         }
