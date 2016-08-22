@@ -37,5 +37,6 @@ public class HttpManager extends BaseHttp {
                       HttpRequest<PagerBean<LoginResult>> httpRequest) {
         httpRequest(context,isCach);
         dispachHttp(api.login(keys, loginRequest), httpRequest);
+
     }
 }
