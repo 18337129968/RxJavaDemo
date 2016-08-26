@@ -147,16 +147,5 @@ public class BaseHttp {
         if (!TextUtils.isEmpty(SingleBeans.getTokenUtil().getToken()) && keys.size() == 0)
             keys.put(TOKEN, SingleBeans.getTokenUtil().getToken());
     }
-
-
-    public interface HttpRequest<T> {
-        void onStart();
-
-        void onSuccess(T t);
-
-        void onFinish();
-
-        void onError();
-    }
 }
 

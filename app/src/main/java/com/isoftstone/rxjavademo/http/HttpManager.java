@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.isoftstone.rxjavademo.beans.PagerBean;
 import com.isoftstone.rxjavademo.beans.request.LoginRequest;
-import com.isoftstone.rxjavademo.beans.result.LoginResult;
+import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
 
 /**
@@ -34,7 +34,7 @@ public class HttpManager extends BaseHttp {
 
     public void login(Context context, boolean isCach,
                       LoginRequest loginRequest,
-                      HttpRequest<PagerBean<LoginResult>> httpRequest) {
+                      HttpRequest<PagerBean<SysUserResponseVo>> httpRequest) {
         httpRequest(context,isCach);
         dispachHttp(api.login(keys, loginRequest), httpRequest);
 

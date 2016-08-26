@@ -3,7 +3,7 @@ package com.isoftstone.rxjavademo.http;
 import com.isoftstone.rxjavademo.beans.ModleBean;
 import com.isoftstone.rxjavademo.beans.PagerBean;
 import com.isoftstone.rxjavademo.beans.request.LoginRequest;
-import com.isoftstone.rxjavademo.beans.result.LoginResult;
+import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
 
 import java.util.Map;
@@ -31,6 +31,6 @@ public interface HttpApi {
                                                 @Query("deviceId") String deviceId);
 
     @POST("auth/login")
-    Observable<ModleBean<PagerBean<LoginResult>>> login(@QueryMap Map<String, String> keys,
-                                                        @Body LoginRequest login);
+    Observable<ModleBean<PagerBean<SysUserResponseVo>>> login(@QueryMap Map<String, String> keys,
+                                                              @Body LoginRequest login);
 }

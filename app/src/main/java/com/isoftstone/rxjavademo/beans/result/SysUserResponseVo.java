@@ -9,7 +9,7 @@ package com.isoftstone.rxjavademo.beans.result;
  * @Description:
  */
 
-public class LoginResult {
+public class SysUserResponseVo {
     public int bindingStatus;
     public String deptId;
     public String deptName;

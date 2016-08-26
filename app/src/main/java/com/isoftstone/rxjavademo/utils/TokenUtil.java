@@ -7,7 +7,7 @@ import android.text.TextUtils;
 import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.app.SingleBeans;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
-import com.isoftstone.rxjavademo.http.BaseHttp;
+import com.isoftstone.rxjavademo.http.HttpRequest;
 
 /**
  * RxJavaDemo
@@ -52,7 +52,7 @@ public class TokenUtil {
             }
 
             SingleBeans.getHttpManager()
-                    .getToken(context, true, APP_ID, deviceId, new BaseHttp.HttpRequest<SysUserBean>() {
+                    .getToken(context, true, APP_ID, deviceId, new HttpRequest<SysUserBean>() {
                                 @Override
                                 public void onStart() {
 //                                    Log.i("tag","----onStart");
