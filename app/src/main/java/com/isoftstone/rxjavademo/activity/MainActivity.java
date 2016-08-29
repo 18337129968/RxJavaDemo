@@ -24,7 +24,9 @@ import rx.functions.Action1;
 public class MainActivity extends BaseActivity implements LoginView {
     @Inject
     protected LoginPresenter loginPresenter;
-    private LoginRequest login;
+    @Inject
+    protected LoginRequest login;
+
     private Button btn;
     private EditText name, pwd;
 
@@ -41,7 +43,7 @@ public class MainActivity extends BaseActivity implements LoginView {
         name.setText("15892");
         pwd = (EditText) findViewById(R.id.password);
         pwd.setText("123456");
-        login = new LoginRequest("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540");
+        login.setUser("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540");
 
         RxView.clicks(btn).throttleFirst(1, TimeUnit.SECONDS)
                 .subscribe(new Action1<Void>() {

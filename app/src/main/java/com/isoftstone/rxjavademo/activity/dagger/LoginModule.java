@@ -23,6 +23,7 @@ public class LoginModule {
     }
 
     public LoginModule() {
+
     }
 
     @Provides
@@ -34,4 +35,5 @@ public class LoginModule {
     LoginPresenter provideLoginPresenter() {
         return new LoginPresenter(loginView);
     }
+
 }

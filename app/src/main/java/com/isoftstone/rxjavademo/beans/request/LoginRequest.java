@@ -1,5 +1,7 @@
 package com.isoftstone.rxjavademo.beans.request;
 
+import javax.inject.Inject;
+
 /**
  * RxJavaDemo
  * com.isoftstone.rxjavademo.beans.request
@@ -14,9 +16,20 @@ public class LoginRequest {
     public String password;
     public String bindingImei;
 
-    public LoginRequest(String userLoginName, String password, String bindingImei) {
+    @Inject
+    public LoginRequest() {
+
+    }
+
+    public void setUser(String userLoginName, String password, String bindingImei) {
         this.userLoginName = userLoginName;
         this.password = password;
         this.bindingImei = bindingImei;
     }
+
+//    public LoginRequest(String userLoginName, String password, String bindingImei) {
+//        this.userLoginName = userLoginName;
+//        this.password = password;
+//        this.bindingImei = bindingImei;
+//    }
 }
