@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.isoftstone.rxjavademo.beans.PagerBean;
 import com.isoftstone.rxjavademo.beans.request.LoginRequest;
-import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
+import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
 
 /**
  * RxJavaDemo

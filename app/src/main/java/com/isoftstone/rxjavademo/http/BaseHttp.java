@@ -8,6 +8,8 @@ import android.webkit.URLUtil;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.app.SingleBeans;
+import com.isoftstone.rxjavademo.beans.BusProvider;
+import com.isoftstone.rxjavademo.beans.ErrorBean;
 import com.isoftstone.rxjavademo.beans.ModleBean;
 
 import java.util.HashMap;
@@ -41,6 +43,7 @@ public class BaseHttp {
     protected Context context;
     protected HttpApi api;
 
+
     private OkHttpClient _createClient(Map<String, String> headers, boolean isCach) {
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
 
@@ -70,7 +73,7 @@ public class BaseHttp {
             @Override
             public T call(ModleBean<T> modleBean) {
                 if (modleBean.success) {
-                    return (T) modleBean.pager;
+                    return modleBean.pager;
                 } else {
                     subscriber.onError(new Throwable(modleBean.msg));
                 }
@@ -125,7 +128,9 @@ public class BaseHttp {
             @Override
             public void onError(Throwable e) {
                 Log.e("tag", "------>onError=" + e.getMessage());
+                unsubscribe();
                 httpRequest.onError();
+                BusProvider.getInstance().post(new ErrorBean(e.getMessage()));
             }
 
             @Override
@@ -147,5 +152,6 @@ public class BaseHttp {
         if (!TextUtils.isEmpty(SingleBeans.getTokenUtil().getToken()) && keys.size() == 0)
             keys.put(TOKEN, SingleBeans.getTokenUtil().getToken());
     }
+
 }
 

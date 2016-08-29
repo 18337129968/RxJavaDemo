@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.isoftstone.rxjavademo.http.HttpManager;
 import com.isoftstone.rxjavademo.utils.CacheManager;
+import com.isoftstone.rxjavademo.utils.Toastor;
 import com.isoftstone.rxjavademo.utils.TokenUtil;
 
 import java.io.File;
@@ -25,6 +26,7 @@ public class SingleBeans {
     private static HttpManager httpManager;
     private static CacheManager cacheManager;
     private static TokenUtil tokenUtil;
+    private static Toastor toastor;
 
     public static SingleBeans getSingleBeans(Context context) {
 
@@ -46,8 +48,13 @@ public class SingleBeans {
             tokenUtil = tokenUtil.getInstance();
             tokenUtil.getTocken(context);
         }
+
+        if (toastor == null) {
+            toastor = new Toastor(context);
+        }
         return singleBeans;
     }
+
 
     public static Cache getCache() {
         return cache;
@@ -63,5 +70,9 @@ public class SingleBeans {
 
     public static TokenUtil getTokenUtil() {
         return tokenUtil;
+    }
+
+    public static Toastor getToastor() {
+        return toastor;
     }
 }

@@ -2,9 +2,15 @@ package com.isoftstone.rxjavademo.app;
 
 import android.app.Application;
 
+import com.isoftstone.rxjavademo.activity.dagger.LoginComponent;
+import com.isoftstone.rxjavademo.activity.dagger.LoginModule;
 import com.isoftstone.rxjavademo.app.user.UserComponent;
 import com.isoftstone.rxjavademo.app.user.UserModule;
+import com.isoftstone.rxjavademo.beans.BusProvider;
+import com.isoftstone.rxjavademo.beans.ErrorBean;
 import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
+import com.isoftstone.rxjavademo.view.LoginView;
+import com.squareup.otto.Subscribe;
 
 /**
  * RxJavaDemo
@@ -29,6 +35,7 @@ public class MyApplication extends Application {
         super.onCreate();
         application = MyApplication.this;
         SingleBeans.getSingleBeans(this);
+        BusProvider.getInstance().register(this);
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
 
@@ -42,8 +49,20 @@ public class MyApplication extends Application {
         return userComponent;
     }
 
+    public LoginComponent creatLoginComponent(LoginView loginView) {
+        return appComponent.getUserComponent(new UserModule()).getLoginComponent(new LoginModule(loginView));
+    }
+
     public void releaseUserComponent() {
         userComponent = null;
     }
+
+    @Subscribe
+    public void callback(ErrorBean error) {
+        if (error != null) {
+            SingleBeans.getToastor().showSingletonToast(error.getError());
+        }
+    }
+
 
 }
