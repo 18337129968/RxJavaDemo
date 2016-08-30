@@ -12,6 +12,7 @@ import javax.inject.Inject;
  */
 
 public class LoginRequest {
+
     public String userLoginName;
     public String password;
     public String bindingImei;

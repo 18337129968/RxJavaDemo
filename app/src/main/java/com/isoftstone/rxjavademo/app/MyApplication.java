@@ -39,6 +39,10 @@ public class MyApplication extends Application {
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
 
+    public LoginComponent creatLoginComponent(LoginView loginView) {
+        return appComponent.getLoginComponent(new LoginModule(loginView));
+    }
+
     public UserComponent createUserComponent(SysUserResponseVo user) {
         userComponent = appComponent.getUserComponent(
                 new UserModule(user));
@@ -49,9 +53,6 @@ public class MyApplication extends Application {
         return userComponent;
     }
 
-    public LoginComponent creatLoginComponent(LoginView loginView) {
-        return appComponent.getUserComponent(new UserModule()).getLoginComponent(new LoginModule(loginView));
-    }
 
     public void releaseUserComponent() {
         userComponent = null;

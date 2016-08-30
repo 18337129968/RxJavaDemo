@@ -17,10 +17,6 @@ import dagger.Provides;
 public class UserModule {
     private SysUserResponseVo user;
 
-    public UserModule() {
-
-    }
-
     public UserModule(SysUserResponseVo user) {
         this.user = user;
     }

@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity implements LoginView {
         name.setText("15892");
         pwd = (EditText) findViewById(R.id.password);
         pwd.setText("123456");
+
         login.setUser("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540");
 
         RxView.clicks(btn).throttleFirst(1, TimeUnit.SECONDS)

@@ -22,10 +22,6 @@ public class LoginModule {
         this.loginView = loginView;
     }
 
-    public LoginModule() {
-
-    }
-
     @Provides
     LoginView provideLoginView() {
         return loginView;

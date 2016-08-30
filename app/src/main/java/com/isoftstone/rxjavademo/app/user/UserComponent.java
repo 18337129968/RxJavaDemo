@@ -1,8 +1,6 @@
 package com.isoftstone.rxjavademo.app.user;
 
-import com.isoftstone.rxjavademo.activity.dagger.LoginComponent;
-import com.isoftstone.rxjavademo.activity.dagger.LoginModule;
-import com.isoftstone.rxjavademo.beans.request.LoginRequest;
+import com.isoftstone.rxjavademo.activity.HomeActivity;
 
 import dagger.Subcomponent;
 
@@ -17,6 +15,5 @@ import dagger.Subcomponent;
 @UserScope
 @Subcomponent(modules = UserModule.class)
 public interface UserComponent {
-    LoginComponent getLoginComponent(LoginModule loginModule);
-    LoginRequest login();
+    void inject(HomeActivity aActivity);
 }

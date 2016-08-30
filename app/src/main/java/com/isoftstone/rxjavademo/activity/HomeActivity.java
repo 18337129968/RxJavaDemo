@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.isoftstone.rxjavademo.R;
-import com.isoftstone.rxjavademo.activity.dagger.LoginModule;
 import com.isoftstone.rxjavademo.app.BaseActivity;
 import com.isoftstone.rxjavademo.app.MyApplication;
 import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
@@ -25,7 +24,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void startWork(Bundle savedInstanceState) {
         textView = (TextView) findViewById(R.id.hometext);
-        MyApplication.getInstance().getUserComponent().getLoginComponent(new LoginModule()).inject(this);
+        MyApplication.getInstance().getUserComponent().inject(this);
         textView.setText(user.userName);
     }
 }
