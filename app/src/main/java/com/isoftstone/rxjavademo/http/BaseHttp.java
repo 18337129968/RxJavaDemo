@@ -7,7 +7,7 @@ import android.webkit.URLUtil;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.isoftstone.rxjavademo.app.Constants;
-import com.isoftstone.rxjavademo.app.SingleBeans;
+import com.isoftstone.rxjavademo.app.AppManagers;
 import com.isoftstone.rxjavademo.beans.BusProvider;
 import com.isoftstone.rxjavademo.beans.ErrorBean;
 import com.isoftstone.rxjavademo.beans.ModleBean;
@@ -53,7 +53,7 @@ public class BaseHttp {
         builder.writeTimeout(Constants.HTTP_CONNECTTIME, TimeUnit.SECONDS);
         if (isCach) {
             builder.addInterceptor(new HttpCachInterceptor(context));
-            builder.cache(SingleBeans.getCache());
+            builder.cache(AppManagers.getCache());
         } else {
             builder.addInterceptor(new HttpInterceptor(headers));
         }
@@ -149,8 +149,8 @@ public class BaseHttp {
     protected void httpRequest(Context context, boolean isCach) {
         this.context = context;
         api = createService(HttpApi.class, null, Constants.BASEURL, isCach);
-        if (!TextUtils.isEmpty(SingleBeans.getTokenUtil().getToken()) && keys.size() == 0)
-            keys.put(TOKEN, SingleBeans.getTokenUtil().getToken());
+        if (!TextUtils.isEmpty(AppManagers.getTokenUtil().getToken()) && keys.size() == 0)
+            keys.put(TOKEN, AppManagers.getTokenUtil().getToken());
     }
 
 }

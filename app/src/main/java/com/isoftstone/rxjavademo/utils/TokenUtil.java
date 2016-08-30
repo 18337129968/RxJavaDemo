@@ -5,7 +5,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 
 import com.isoftstone.rxjavademo.app.Constants;
-import com.isoftstone.rxjavademo.app.SingleBeans;
+import com.isoftstone.rxjavademo.app.AppManagers;
 import com.isoftstone.rxjavademo.beans.result.SysUserBean;
 import com.isoftstone.rxjavademo.http.HttpRequest;
 
@@ -36,9 +36,9 @@ public class TokenUtil {
     }
 
     public void getTocken(Context context) {
-        mToken = SingleBeans.getCacheManager().getAsString(Constants.KEY_TOKEN);
+        mToken = AppManagers.getCacheManager().getAsString(Constants.KEY_TOKEN);
         if (TextUtils.isEmpty(mToken)) {
-            String deviceId = SingleBeans.getCacheManager().getAsString(KEY_DEVICE_ID);
+            String deviceId = AppManagers.getCacheManager().getAsString(KEY_DEVICE_ID);
             if (TextUtils.isEmpty(deviceId)) {
                 deviceId = TelephoneUtil.getIMEI(context);
                 if (TextUtils.isEmpty(deviceId)) {
@@ -47,11 +47,11 @@ public class TokenUtil {
                         deviceId = Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID);
                     }
                 }
-                SingleBeans.getCacheManager().put(KEY_DEVICE_ID, deviceId);
+                AppManagers.getCacheManager().put(KEY_DEVICE_ID, deviceId);
                 DEVICE_ID = deviceId;
             }
 
-            SingleBeans.getHttpManager()
+            AppManagers.getHttpManager()
                     .getToken(context, true, APP_ID, deviceId, new HttpRequest<SysUserBean>() {
                                 @Override
                                 public void onStart() {
@@ -66,7 +66,7 @@ public class TokenUtil {
 
                                 @Override
                                 public void onFinish() {
-                                    SingleBeans.getCacheManager().put(Constants.KEY_TOKEN, mToken);
+                                    AppManagers.getCacheManager().put(Constants.KEY_TOKEN, mToken);
 //                                    Log.i("tag","----onFinish");
                                 }
 
@@ -82,7 +82,7 @@ public class TokenUtil {
 
     public String getToken() {
         if (TextUtils.isEmpty(mToken)) {
-            return SingleBeans.getCacheManager().getAsString(Constants.KEY_TOKEN);
+            return AppManagers.getCacheManager().getAsString(Constants.KEY_TOKEN);
         }
         return mToken;
     }

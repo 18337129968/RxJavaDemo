@@ -34,7 +34,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         application = MyApplication.this;
-        SingleBeans.getSingleBeans(this);
+        AppManagers.getAppManagers(this);
         BusProvider.getInstance().register(this);
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
@@ -61,7 +61,7 @@ public class MyApplication extends Application {
     @Subscribe
     public void callback(ErrorBean error) {
         if (error != null) {
-            SingleBeans.getToastor().showSingletonToast(error.getError());
+            AppManagers.getToastor().showSingletonToast(error.getError());
         }
     }
 

@@ -20,15 +20,16 @@ import okhttp3.Cache;
  * @Description:
  */
 
-public class SingleBeans {
-    private static SingleBeans singleBeans = new SingleBeans();
+public class AppManagers {
+
+    private static AppManagers appManagers = new AppManagers();
     private static Cache cache;
     private static HttpManager httpManager;
     private static CacheManager cacheManager;
     private static TokenUtil tokenUtil;
     private static Toastor toastor;
 
-    public static SingleBeans getSingleBeans(Context context) {
+    public static AppManagers getAppManagers(Context context) {
 
         if (cache == null) {
             File cacheFile = new File(context.getCacheDir(), Constants.HTTP_CACHFILENAME);
@@ -52,7 +53,7 @@ public class SingleBeans {
         if (toastor == null) {
             toastor = new Toastor(context);
         }
-        return singleBeans;
+        return appManagers;
     }
 
 
