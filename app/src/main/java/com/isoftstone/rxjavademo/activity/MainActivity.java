@@ -11,6 +11,7 @@ import com.isoftstone.rxjavademo.app.BaseActivity;
 import com.isoftstone.rxjavademo.app.MyApplication;
 import com.isoftstone.rxjavademo.beans.request.LoginRequest;
 import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
+import com.isoftstone.rxjavademo.utils.AppUtil;
 import com.isoftstone.rxjavademo.view.LoginView;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
@@ -43,10 +44,10 @@ public class MainActivity extends BaseActivity implements LoginView {
         name.setText("15892");
         pwd = (EditText) findViewById(R.id.password);
         pwd.setText("123456");
+        login.setUser("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540",
+                AppUtil.getPackageInfo(this).versionName, 2);
 
-        login.setUser("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540");
-
-        RxView.clicks(btn).throttleFirst(1, TimeUnit.SECONDS)
+        RxView.clicks(btn).throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
@@ -70,6 +71,7 @@ public class MainActivity extends BaseActivity implements LoginView {
                     }
                 });
 
+
     }
 
     @Override
@@ -83,7 +85,8 @@ public class MainActivity extends BaseActivity implements LoginView {
 
     @Override
     public void success(SysUserResponseVo user) {
-        MyApplication.getInstance().createUserComponent(user);
+        loginPresenter.saveUser(MainActivity.this,user);
+//        MyApplication.getInstance().createUserComponent(user);
         startActivity(new Intent(MainActivity.this, HomeActivity.class));
     }
 

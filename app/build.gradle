@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 23
@@ -42,4 +43,8 @@ dependencies {
     compile 'com.google.dagger:dagger:2.2'
 
     compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+
+    compile 'org.greenrobot:greendao:3.1.1'
+
+    compile 'com.alibaba:fastjson:1.2.16'
 }

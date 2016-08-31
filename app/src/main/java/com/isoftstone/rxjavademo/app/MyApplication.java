@@ -6,9 +6,8 @@ import com.isoftstone.rxjavademo.activity.dagger.LoginComponent;
 import com.isoftstone.rxjavademo.activity.dagger.LoginModule;
 import com.isoftstone.rxjavademo.app.user.UserComponent;
 import com.isoftstone.rxjavademo.app.user.UserModule;
-import com.isoftstone.rxjavademo.beans.BusProvider;
-import com.isoftstone.rxjavademo.beans.ErrorBean;
 import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
+import com.isoftstone.rxjavademo.utils.BusProvider;
 import com.isoftstone.rxjavademo.view.LoginView;
 import com.squareup.otto.Subscribe;
 
@@ -35,7 +34,7 @@ public class MyApplication extends Application {
         super.onCreate();
         application = MyApplication.this;
         AppManagers.getAppManagers(this);
-        BusProvider.getInstance().register(this);
+        BusProvider.register(this);
         appComponent = DaggerAppComponent.builder().appModule(new AppModule(this)).build();
     }
 
@@ -59,9 +58,9 @@ public class MyApplication extends Application {
     }
 
     @Subscribe
-    public void callback(ErrorBean error) {
+    public void callback(String error) {
         if (error != null) {
-            AppManagers.getToastor().showSingletonToast(error.getError());
+            AppManagers.getToastor().showSingletonToast(error);
         }
     }
 

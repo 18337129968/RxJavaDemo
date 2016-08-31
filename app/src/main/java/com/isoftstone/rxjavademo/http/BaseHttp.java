@@ -6,11 +6,11 @@ import android.util.Log;
 import android.webkit.URLUtil;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
-import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.app.AppManagers;
-import com.isoftstone.rxjavademo.beans.BusProvider;
-import com.isoftstone.rxjavademo.beans.ErrorBean;
+import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.beans.ModleBean;
+import com.isoftstone.rxjavademo.utils.BusProvider;
+import com.isoftstone.rxjavademo.utils.fastjson.FastJsonConverterFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -69,17 +68,17 @@ public class BaseHttp {
 
     private <T> Subscription httpResult(Observable<ModleBean<T>> observable, final Subscriber<T> subscriber) {
 
-        return observable.map(new Func1<ModleBean<T>, T>() {
-            @Override
-            public T call(ModleBean<T> modleBean) {
-                if (modleBean.success) {
-                    return modleBean.pager;
-                } else {
-                    subscriber.onError(new Throwable(modleBean.msg));
-                }
-                return null;
-            }
-        }).subscribeOn(Schedulers.io())
+        return observable
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<ModleBean<T>, T>() {
+                    @Override
+                    public T call(ModleBean<T> modleBean) {
+                        if (!modleBean.success) {
+                            subscriber.onError(new Throwable(modleBean.msg));
+                        }
+                        return modleBean.pager;
+                    }
+                }).subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
@@ -102,7 +101,7 @@ public class BaseHttp {
 
         Retrofit.Builder builder = new Retrofit.Builder()
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(FastJsonConverterFactory.create())
                 .baseUrl(baseURL);
 
         builder.client(_createClient(headers, isCach));
@@ -127,10 +126,11 @@ public class BaseHttp {
 
             @Override
             public void onError(Throwable e) {
-                Log.e("tag", "------>onError=" + e.getMessage());
                 unsubscribe();
+                BusProvider.post(e.getMessage());
+                Log.e("tag", "------>onError=" + e.getMessage());
                 httpRequest.onError();
-                BusProvider.getInstance().post(new ErrorBean(e.getMessage()));
+
             }
 
             @Override
