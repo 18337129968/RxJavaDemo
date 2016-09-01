@@ -2,6 +2,7 @@ package com.isoftstone.rxjavademo.app;
 
 import android.app.Application;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isoftstone.rxjavademo.activity.dagger.LoginComponent;
 import com.isoftstone.rxjavademo.activity.dagger.LoginModule;
 import com.isoftstone.rxjavademo.app.user.UserComponent;
@@ -32,6 +33,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fresco.initialize(this);
         application = MyApplication.this;
         AppManagers.getAppManagers(this);
         BusProvider.register(this);

@@ -16,20 +16,26 @@ import com.isoftstone.rxjavademo.view.LoginView;
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import rx.functions.Action1;
 
+@EActivity()
 public class MainActivity extends BaseActivity implements LoginView {
     @Inject
     protected LoginPresenter loginPresenter;
     @Inject
     protected LoginRequest login;
-
-    private Button btn;
-    private EditText name, pwd;
+    @ViewById
+    Button button;
+    @ViewById
+    EditText username , password;
 
     @Override
     protected int getContentResource() {
@@ -39,15 +45,15 @@ public class MainActivity extends BaseActivity implements LoginView {
     @Override
     protected void startWork(Bundle savedInstanceState) {
         MyApplication.getInstance().creatLoginComponent(this).inject(this);
-        btn = (Button) findViewById(R.id.button);
-        name = (EditText) findViewById(R.id.username);
-        name.setText("15892");
-        pwd = (EditText) findViewById(R.id.password);
-        pwd.setText("123456");
+//        btn = (Button) findViewById(R.id.button);
+//        name = (EditText) findViewById(R.id.username);
+        username.setText("15892");
+//        pwd = (EditText) findViewById(R.id.password);
+        password.setText("123456");
         login.setUser("15892", "123456", "e3225cc1-eba7-4993-93f9-63044d4ee540",
                 AppUtil.getPackageInfo(this).versionName, 2);
 
-        RxView.clicks(btn).throttleFirst(500, TimeUnit.MILLISECONDS)
+        RxView.clicks(button).throttleFirst(500, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
@@ -55,31 +61,30 @@ public class MainActivity extends BaseActivity implements LoginView {
                     }
                 });
 
-        RxTextView.textChanges(name)
+        RxTextView.textChanges(username)
                 .subscribe(new Action1<CharSequence>() {
                     @Override
                     public void call(CharSequence charSequence) {
-                        loginPresenter.checkInput(charSequence.toString(), pwd.getText().toString());
+                        loginPresenter.checkInput(charSequence.toString(), password.getText().toString());
                     }
                 });
 
-        RxTextView.textChanges(pwd)
+        RxTextView.textChanges(password)
                 .subscribe(new Action1<CharSequence>() {
                     @Override
                     public void call(CharSequence charSequence) {
-                        loginPresenter.checkInput(name.getText().toString(), charSequence.toString());
+                        loginPresenter.checkInput(username.getText().toString(), charSequence.toString());
                     }
                 });
-
 
     }
 
     @Override
     public void canLogin(boolean canLogin) {
         if (canLogin) {
-            btn.setEnabled(canLogin);
+            button.setEnabled(canLogin);
         } else {
-            btn.setEnabled(false);
+            button.setEnabled(false);
         }
     }
 
@@ -103,6 +108,11 @@ public class MainActivity extends BaseActivity implements LoginView {
     @Override
     public void hideLoading() {
         dissmissProgressDialog();
+    }
+
+    @AfterViews
+    public void initView(){
+
     }
 
 }

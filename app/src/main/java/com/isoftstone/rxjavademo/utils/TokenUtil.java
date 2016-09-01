@@ -66,7 +66,8 @@ public class TokenUtil {
 
                                 @Override
                                 public void onFinish() {
-                                    AppManagers.getCacheManager().put(Constants.KEY_TOKEN, mToken);
+                                    if (!TextUtils.isEmpty(mToken))
+                                        AppManagers.getCacheManager().put(Constants.KEY_TOKEN, mToken);
 //                                    Log.i("tag","----onFinish");
                                 }
 

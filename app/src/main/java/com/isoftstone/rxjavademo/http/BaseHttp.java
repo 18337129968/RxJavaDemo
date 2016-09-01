@@ -6,12 +6,20 @@ import android.util.Log;
 import android.webkit.URLUtil;
 
 import com.facebook.stetho.okhttp3.StethoInterceptor;
+import com.google.gson.JsonSyntaxException;
 import com.isoftstone.rxjavademo.app.AppManagers;
 import com.isoftstone.rxjavademo.app.Constants;
 import com.isoftstone.rxjavademo.beans.ModleBean;
 import com.isoftstone.rxjavademo.utils.BusProvider;
+import com.isoftstone.rxjavademo.utils.MaitianErrorHandler;
 import com.isoftstone.rxjavademo.utils.fastjson.FastJsonConverterFactory;
 
+import java.io.EOFException;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import rx.Observable;
 import rx.Subscriber;
@@ -54,7 +63,11 @@ public class BaseHttp {
             builder.addInterceptor(new HttpCachInterceptor(context));
             builder.cache(AppManagers.getCache());
         } else {
-            builder.addInterceptor(new HttpInterceptor(headers));
+            try {
+                builder.addInterceptor(new HttpInterceptor(headers));
+            } catch (Exception e) {
+                new Throwable(e);
+            }
         }
 
         if (Constants.HTTP_DEBUG) {
@@ -74,7 +87,7 @@ public class BaseHttp {
                     @Override
                     public T call(ModleBean<T> modleBean) {
                         if (!modleBean.success) {
-                            subscriber.onError(new Throwable(modleBean.msg));
+                            subscriber.onError(new Error(modleBean.msg));
                         }
                         return modleBean.pager;
                     }
@@ -127,9 +140,9 @@ public class BaseHttp {
             @Override
             public void onError(Throwable e) {
                 unsubscribe();
-                BusProvider.post(e.getMessage());
-                Log.e("tag", "------>onError=" + e.getMessage());
+                ThrowErrorInfo(e);
                 httpRequest.onError();
+                Log.e("tag", "------>onError=" + e.getMessage());
 
             }
 
@@ -138,6 +151,60 @@ public class BaseHttp {
                 httpRequest.onSuccess(t);
             }
         });
+    }
+
+    private void ThrowErrorInfo(Throwable e) {
+        if (e instanceof HttpException) {
+            HttpException httpException = (HttpException) e;
+            int statusCode = httpException.code();
+            switch (statusCode) {
+                case HttpURLConnection.HTTP_BAD_REQUEST:
+                    BusProvider.post(MaitianErrorHandler.EMS.get("6"));
+                    break;
+                case HttpURLConnection.HTTP_UNAUTHORIZED:
+                case HttpURLConnection.HTTP_FORBIDDEN:
+                    BusProvider.post(MaitianErrorHandler.EMS.get("12"));
+                    break;
+                case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
+                    BusProvider.post(MaitianErrorHandler.EMS.get("13"));
+                    break;
+                case HttpURLConnection.HTTP_GATEWAY_TIMEOUT:
+                    BusProvider.post(MaitianErrorHandler.EMS.get("14"));
+                    break;
+                case HttpURLConnection.HTTP_NOT_FOUND:
+                case HttpURLConnection.HTTP_INTERNAL_ERROR:
+                case HttpURLConnection.HTTP_BAD_GATEWAY:
+                case HttpURLConnection.HTTP_UNAVAILABLE:
+                    BusProvider.post(MaitianErrorHandler.EMS.get("3"));
+                    break;
+                default:
+                    if (statusCode >= 300 && statusCode <= 499) {
+                        BusProvider.post(MaitianErrorHandler.EMS.get("2"));
+                    } else if (statusCode >= 500 && statusCode <= 599) {
+                        BusProvider.post(MaitianErrorHandler.EMS.get("3"));
+                    } else {
+                        BusProvider.post(MaitianErrorHandler.EMS.get("4"));
+                    }
+                    break;
+            }
+        } else if (e instanceof JsonSyntaxException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("10"));
+        } else if (e instanceof UnknownHostException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("8"));
+        } else if (e instanceof EOFException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("5"));
+        } else if (e instanceof SocketTimeoutException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("9"));
+        } else if (e instanceof InterruptedIOException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("7"));
+        } else if (e instanceof ConnectException) {
+            BusProvider.post(MaitianErrorHandler.EMS.get("11"));
+        } else if (e instanceof Error){
+            BusProvider.post(e.getMessage());
+        }
+        else {
+            BusProvider.post(MaitianErrorHandler.EMS.get("1"));
+        }
     }
 
     /**
