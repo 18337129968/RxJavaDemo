@@ -15,6 +15,7 @@ import com.isoftstone.rxjavademo.utils.MaitianErrorHandler;
 import com.isoftstone.rxjavademo.utils.fastjson.FastJsonConverterFactory;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.InterruptedIOException;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -50,7 +52,7 @@ public class BaseHttp {
     protected final String TOKEN = "token";
     protected Context context;
     protected HttpApi api;
-
+    private Cache cache;
 
     private OkHttpClient _createClient(Map<String, String> headers, boolean isCach) {
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
@@ -61,13 +63,13 @@ public class BaseHttp {
         builder.writeTimeout(Constants.HTTP_CONNECTTIME, TimeUnit.SECONDS);
         if (isCach) {
             builder.addInterceptor(new HttpCachInterceptor(context));
-            builder.cache(AppManagers.getCache());
-        } else {
-            try {
-                builder.addInterceptor(new HttpInterceptor(headers));
-            } catch (Exception e) {
-                new Throwable(e);
+            if (cache == null) {
+                File cacheFile = new File(context.getCacheDir(), Constants.HTTP_CACHFILENAME);
+                cache = new Cache(cacheFile, Constants.HTTP_CACHSIZE);
             }
+            builder.cache(cache);
+        } else {
+            builder.addInterceptor(new HttpInterceptor(headers));
         }
 
         if (Constants.HTTP_DEBUG) {
@@ -199,10 +201,9 @@ public class BaseHttp {
             BusProvider.post(MaitianErrorHandler.EMS.get("7"));
         } else if (e instanceof ConnectException) {
             BusProvider.post(MaitianErrorHandler.EMS.get("11"));
-        } else if (e instanceof Error){
+        } else if (e instanceof Error) {
             BusProvider.post(e.getMessage());
-        }
-        else {
+        } else {
             BusProvider.post(MaitianErrorHandler.EMS.get("1"));
         }
     }

@@ -9,8 +9,6 @@ import com.isoftstone.rxjavademo.utils.TokenUtil;
 
 import java.io.File;
 
-import okhttp3.Cache;
-
 /**
  * RxJavaDemo
  * com.isoftstone.rxjavademo.app
@@ -23,7 +21,6 @@ import okhttp3.Cache;
 public class AppManagers {
 
     private static AppManagers appManagers = new AppManagers();
-    private static Cache cache;
     private static HttpManager httpManager;
     private static CacheManager cacheManager;
     private static TokenUtil tokenUtil;
@@ -31,18 +28,13 @@ public class AppManagers {
 
     public static AppManagers getAppManagers(Context context) {
 
-        if (cache == null) {
-            File cacheFile = new File(context.getCacheDir(), Constants.HTTP_CACHFILENAME);
-            cache = new Cache(cacheFile, Constants.HTTP_CACHSIZE);
-        }
-
         if (httpManager == null) {
             httpManager = HttpManager.getInstance();
         }
 
         if (cacheManager == null) {
             cacheManager = CacheManager.get(context.getExternalCacheDir().getAbsolutePath() +
-                    File.separator + "cache");
+                    File.separator + "DataCache");
         }
 
         if (tokenUtil == null) {
@@ -54,11 +46,6 @@ public class AppManagers {
             toastor = new Toastor(context);
         }
         return appManagers;
-    }
-
-
-    public static Cache getCache() {
-        return cache;
     }
 
     public static HttpManager getHttpManager() {

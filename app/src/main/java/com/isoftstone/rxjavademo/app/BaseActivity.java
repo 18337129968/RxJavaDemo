@@ -27,6 +27,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected void showProgressDialog(String message) {
         progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setMessage(message);
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
