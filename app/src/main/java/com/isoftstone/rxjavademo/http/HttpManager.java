@@ -37,6 +37,5 @@ public class HttpManager extends BaseHttp {
                       HttpRequest<PagerBean<SysUserResponseVo>> httpRequest) {
         httpRequest(context,isCach);
         dispachHttp(api.login(keys, loginRequest), httpRequest);
-
     }
 }

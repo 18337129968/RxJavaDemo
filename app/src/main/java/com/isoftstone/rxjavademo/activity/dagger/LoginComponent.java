@@ -16,5 +16,6 @@ import dagger.Subcomponent;
 @Subcomponent(modules = LoginModule.class)
 public interface LoginComponent {
     LoginRequest login();
+
     void inject(MainActivity activity);
 }
