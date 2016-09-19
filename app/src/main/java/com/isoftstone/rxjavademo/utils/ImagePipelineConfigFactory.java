@@ -62,9 +62,11 @@ public class ImagePipelineConfigFactory {
             OkHttpClient okHttpClient = new OkHttpClient();
             ImagePipelineConfig.Builder configBuilder =
                     OkHttpImagePipelineConfigFactory.newBuilder(context, okHttpClient);
+            configBuilder.setProgressiveJpegConfig(mProgressiveJpegConfig);
             configBuilder.setBitmapsConfig(Bitmap.Config.ARGB_8888);
             configureCaches(configBuilder, context);
             configureLoggingListeners(configBuilder);
+            configureOptions(configBuilder);
             sOkHttpImagePipelineConfig = configBuilder.build();
         }
         return sOkHttpImagePipelineConfig;
