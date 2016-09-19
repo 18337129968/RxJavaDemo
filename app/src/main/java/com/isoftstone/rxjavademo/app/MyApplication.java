@@ -9,6 +9,7 @@ import com.isoftstone.rxjavademo.app.user.UserComponent;
 import com.isoftstone.rxjavademo.app.user.UserModule;
 import com.isoftstone.rxjavademo.beans.result.SysUserResponseVo;
 import com.isoftstone.rxjavademo.utils.BusProvider;
+import com.isoftstone.rxjavademo.utils.ImagePipelineConfigFactory;
 import com.isoftstone.rxjavademo.view.LoginView;
 import com.squareup.otto.Subscribe;
 
@@ -33,7 +34,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fresco.initialize(this);
+        Fresco.initialize(this, ImagePipelineConfigFactory.getOkHttpImagePipelineConfig(this));
         application = MyApplication.this;
         AppManagers.getAppManagers(this);
         BusProvider.register(this);
